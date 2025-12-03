@@ -1,5 +1,19 @@
 # Forecasting Daily Inbound Orders Using LSTM
 
+//Env
+Python 3.10.11
+pip 23.x.x
+
+//Setting lib
+pip install numpy pandas matplotlib scikit-learn
+pip install tensorflow==2.12.0
+
+//Run
+pip install -r requirements.txt
+python src/data_generator.py
+python src/train.py
+python src/visualize.py
+
 This project applies Deep Learning to forecast next-day inbound order volumes.
 
 ## Models
