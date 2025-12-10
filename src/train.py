@@ -1,37 +1,53 @@
-# Step 5: Train + Evaluate
-from preprocess import load_and_preprocess
-from model_dnn import build_dnn
-from model_lstm import build_lstm
-from tensorflow.keras.callbacks import EarlyStopping
 import numpy as np
+import tensorflow as tf
+from tensorflow.keras import layers, models
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+import os
 
-X_train, y_train, X_test, y_test, scaler = load_and_preprocess()
+SEQ_LEN = 14
 
-# Models
-dnn = build_dnn(X_train.shape[1:])
-lstm = build_lstm(X_train.shape[1:])
+print("🔹 Loading preprocessed data...")
+X_train = np.load("data/X_train.npy")
+y_train = np.load("data/y_train.npy")
+X_val = np.load("data/X_val.npy")
+y_val = np.load("data/y_val.npy")
 
-callbacks = [EarlyStopping(patience=3, restore_best_weights=True)]
+# ---------------- BASELINE DNN ----------------
 
-# Train DNN
-print("\nTraining DNN...")
-dnn.fit(X_train, y_train, epochs=50, batch_size=32, validation_split=0.2, callbacks=callbacks)
+def build_dnn(input_shape):
+    model = models.Sequential([
+        layers.Flatten(input_shape=input_shape),
+        layers.Dense(64, activation="relu"),
+        layers.Dense(32, activation="relu"),
+        layers.Dense(1)
+    ])
+    model.compile(optimizer="adam", loss="mse")
+    return model
 
-# Train LSTM
-print("\nTraining LSTM...")
-lstm.fit(X_train, y_train, epochs=50, batch_size=32, validation_split=0.2, callbacks=callbacks)
 
-# Predict
-y_pred_dnn = dnn.predict(X_test)
-y_pred_lstm = lstm.predict(X_test)
+print("🔹 Training DNN baseline...")
+dnn = build_dnn((SEQ_LEN, X_train.shape[2]))
+dnn.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=20, batch_size=32, verbose=1)
 
-# Inverse scale
-y_pred_dnn = scaler.inverse_transform(y_pred_dnn)
-y_pred_lstm = scaler.inverse_transform(y_pred_lstm)
-y_test_real = scaler.inverse_transform(y_test)
+dnn.save("dnn_model.h5")
 
-np.save("data/y_test.npy", y_test_real)
-np.save("data/y_pred_dnn.npy", y_pred_dnn)
-np.save("data/y_pred_lstm.npy", y_pred_lstm)
 
-print("Training completed!")
+# ---------------- LSTM MODEL ----------------
+
+def build_lstm(input_shape):
+    model = models.Sequential([
+        layers.LSTM(64, return_sequences=False, input_shape=input_shape),
+        layers.Dense(32, activation="relu"),
+        layers.Dense(1)
+    ])
+    model.compile(optimizer="adam", loss="mse")
+    return model
+
+
+print("🔹 Training LSTM model...")
+lstm = build_lstm((SEQ_LEN, X_train.shape[2]))
+lstm.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=20, batch_size=32, verbose=1)
+
+lstm.save("lstm_model.h5")
+
+print("✅ Training finished!")
