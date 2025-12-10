@@ -3,22 +3,94 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 
 print("🔹 Loading data & models...")
+
+# Load test sets
 X_test = np.load("data/X_test.npy")
 y_test = np.load("data/y_test.npy")
 
+# Load trained models
 dnn = load_model("dnn_model.h5")
 lstm = load_model("lstm_model.h5")
 
-print("🔹 Predicting...")
-y_pred_dnn = dnn.predict(X_test)
-y_pred_lstm = lstm.predict(X_test)
+# Make predictions
+dnn_pred = dnn.predict(X_test)
+lstm_pred = lstm.predict(X_test)
 
-plt.figure(figsize=(12, 6))
+# ------------------------------
+# 1) LSTM Train / Validation Loss
+# ------------------------------
+print("📊 Plotting LSTM Loss Curve...")
+lstm_hist = np.load("data/lstm_loss.npy", allow_pickle=True).item()
+
+plt.figure(figsize=(10,4))
+plt.plot(lstm_hist["loss"], label="Train Loss")
+plt.plot(lstm_hist["val_loss"], label="Validation Loss")
+plt.title("LSTM Training vs Validation Loss")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# ------------------------------
+# 2) DNN Train / Validation Loss
+# ------------------------------
+print("📊 Plotting DNN Loss Curve...")
+dnn_hist = np.load("data/dnn_loss.npy", allow_pickle=True).item()
+
+plt.figure(figsize=(10,4))
+plt.plot(dnn_hist["loss"], label="Train Loss")
+plt.plot(dnn_hist["val_loss"], label="Validation Loss")
+plt.title("DNN Training vs Validation Loss")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# ------------------------------
+# 3) LSTM Actual vs Predicted
+# ------------------------------
+print("📊 Plotting LSTM Prediction...")
+plt.figure(figsize=(12,5))
 plt.plot(y_test, label="Actual", linewidth=2)
-plt.plot(y_pred_dnn, label="DNN Prediction", alpha=0.7)
-plt.plot(y_pred_lstm, label="LSTM Prediction", alpha=0.7)
-plt.title("Retail Demand Forecasting (Scaled Values)")
+plt.plot(lstm_pred, label="LSTM Prediction", linewidth=1.5)
+plt.title("LSTM Forecasting Performance")
 plt.xlabel("Samples")
 plt.ylabel("Scaled Demand")
 plt.legend()
+plt.grid(True)
 plt.show()
+
+# ------------------------------
+# 4) DNN Actual vs Predicted
+# ------------------------------
+print("📊 Plotting DNN Prediction...")
+plt.figure(figsize=(12,5))
+plt.plot(y_test, label="Actual", linewidth=2)
+plt.plot(dnn_pred, label="DNN Prediction", linewidth=1.5)
+plt.title("DNN Forecasting Performance")
+plt.xlabel("Samples")
+plt.ylabel("Scaled Demand")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+print("✅ All plots generated!")
+
+# ------------------------------
+# 5) Comparison: LSTM vs DNN vs Actual
+# ------------------------------
+print("📊 Plotting Model Comparison...")
+
+plt.figure(figsize=(14,6))
+plt.plot(y_test, label="Actual", linewidth=2, color="black")
+plt.plot(dnn_pred, label="DNN Prediction", alpha=0.7)
+plt.plot(lstm_pred, label="LSTM Prediction", alpha=0.7)
+plt.title("Model Comparison: LSTM vs DNN vs Actual")
+plt.xlabel("Samples")
+plt.ylabel("Scaled Demand")
+plt.legend()
+plt.grid(True)
+plt.show()
+
