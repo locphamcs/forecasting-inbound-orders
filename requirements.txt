@@ -3,5 +3,3 @@ pandas
 matplotlib
 scikit-learn
 tensorflow==2.12.0
-keras
-seaborn
