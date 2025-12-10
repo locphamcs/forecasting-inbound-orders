@@ -78,6 +78,8 @@ This displays:
 
 ## 🔁 Pipeline Overview
 
+## 📈 Pipeline Overview
+
 1. **Load & preprocess retail dataset**
 2. **Generate calendar, lag, and rolling features**
 3. **Scale & reshape data into LSTM sequences**
