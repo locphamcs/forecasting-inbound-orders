@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 print("🔹 Loading data & models...")
 
@@ -94,3 +95,22 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
+X_test = np.load("data/X_test.npy")
+y_test = np.load("data/y_test.npy")
+
+dnn = load_model("dnn_model.h5")
+lstm = load_model("lstm_model.h5")
+
+y_pred_dnn = dnn.predict(X_test)
+y_pred_lstm = lstm.predict(X_test)
+
+mae_dnn = mean_absolute_error(y_test, y_pred_dnn)
+rmse_dnn = np.sqrt(mean_squared_error(y_test, y_pred_dnn))
+
+mae_lstm = mean_absolute_error(y_test, y_pred_lstm)
+rmse_lstm = np.sqrt(mean_squared_error(y_test, y_pred_lstm))
+
+print("DNN MAE :", mae_dnn)
+print("DNN RMSE:", rmse_dnn)
+print("LSTM MAE :", mae_lstm)
+print("LSTM RMSE:", rmse_lstm)
