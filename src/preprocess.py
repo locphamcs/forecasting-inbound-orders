@@ -74,16 +74,16 @@ def main():
     ]
 
     print("🔹 Scaling features...")
+    
     scaler = MinMaxScaler()
     scaled = scaler.fit_transform(df[feature_cols])
 
     X_all = scaled
-    y_all = scaled[:, 0]  # cột 0 = 'sales' đã scale
+    y_all = scaled[:, 0]  
 
     print("🔹 Creating sequences...")
     X_seq, y_seq = create_sequences(X_all, y_all, SEQ_LEN)
 
-    # train/val/test split theo tỉ lệ
     train_size = int(len(X_seq) * 0.7)
     val_size = int(len(X_seq) * 0.15)
 

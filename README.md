@@ -112,8 +112,5 @@ This project demonstrates a complete workflow for time-series forecasting in ret
 
 ---
 
-## 📌 Author
 
-Pham Van Loc – Supply Chain & Deep Learning Project  
-Changwon National University  
 

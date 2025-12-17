@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.metrics import r2_score
 
 print("🔹 Loading data & models...")
 
@@ -109,6 +110,12 @@ rmse_dnn = np.sqrt(mean_squared_error(y_test, y_pred_dnn))
 
 mae_lstm = mean_absolute_error(y_test, y_pred_lstm)
 rmse_lstm = np.sqrt(mean_squared_error(y_test, y_pred_lstm))
+
+r2_dnn = r2_score(y_test, y_pred_dnn)
+r2_lstm = r2_score(y_test, y_pred_lstm)
+
+print("DNN R2 :", r2_dnn)
+print("LSTM R2:", r2_lstm)
 
 print("DNN MAE :", mae_dnn)
 print("DNN RMSE:", rmse_dnn)
